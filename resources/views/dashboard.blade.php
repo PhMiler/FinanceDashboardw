@@ -2,11 +2,36 @@
 
 @section('content')
 <div class="container mt-4">
-    <div class="row mb-4">
-        <div class="col">
-            <h2 class="fw-bold text-primary">Dashboard Financeiro</h2>
+
+    {{-- Título + Filtro --}}
+    <div class="row align-items-center mb-4">
+        <div class="col-lg-6 col-12 d-flex align-items-center">
+            <h2 class="fw-bold text-primary mb-0">Dashboard Financeiro</h2>
+        </div>
+        <div class="col-lg-6 col-12 d-flex justify-content-lg-end justify-content-start mt-3 mt-lg-0">
+            <form class="d-flex flex-wrap align-items-end gap-2" method="GET" action="{{ route('dashboard') }}">
+                <div>
+                    <label for="data_inicio" class="form-label mb-0 me-1">De:</label>
+                    <input type="date" id="data_inicio" name="data_inicio" class="form-control"
+                           style="min-width: 140px;"
+                           value="{{ request('data_inicio') }}">
+                </div>
+                <div>
+                    <label for="data_fim" class="form-label mb-0 me-1">Até:</label>
+                    <input type="date" id="data_fim" name="data_fim" class="form-control"
+                           style="min-width: 140px;"
+                           value="{{ request('data_fim') }}">
+                </div>
+                <div>
+                    <button type="submit" class="btn btn-primary px-4 mt-3 mt-md-0">
+                        Filtrar
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
+
+    {{-- Cards do resumo --}}
     <div class="row g-4 mb-4">
         <div class="col-md-3">
             <div class="card border-primary shadow">

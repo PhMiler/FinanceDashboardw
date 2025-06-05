@@ -18,7 +18,7 @@ class ReceitaPolicy
      */
     public function viewAny(User $user)
     {
-        //
+        return true;
     }
 
     /**
@@ -30,7 +30,7 @@ class ReceitaPolicy
      */
     public function view(User $user, Receita $receita)
     {
-        //
+        return $user->id === $receita->user_id;
     }
 
     /**
@@ -41,7 +41,7 @@ class ReceitaPolicy
      */
     public function create(User $user)
     {
-        //
+        return true;
     }
 
     /**
@@ -53,7 +53,7 @@ class ReceitaPolicy
      */
     public function update(User $user, Receita $receita)
     {
-        //
+        return $user->id === $receita->user_id;
     }
 
     /**
@@ -65,7 +65,7 @@ class ReceitaPolicy
      */
     public function delete(User $user, Receita $receita)
     {
-        //
+        return $user->id === $receita->user_id;
     }
 
     /**
@@ -77,7 +77,7 @@ class ReceitaPolicy
      */
     public function restore(User $user, Receita $receita)
     {
-        //
+        return $user->id === $receita->user_id;
     }
 
     /**
@@ -89,6 +89,6 @@ class ReceitaPolicy
      */
     public function forceDelete(User $user, Receita $receita)
     {
-        //
+        return $user->id === $receita->user_id;
     }
 }

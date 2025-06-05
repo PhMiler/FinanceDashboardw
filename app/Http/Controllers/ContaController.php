@@ -23,9 +23,11 @@ class ContaController extends Controller
     {
         $request->validate([
             'nome' => 'required|string|max:255',
-            'valor' => 'required|numeric',
+            'valor' => 'required|numeric|min:0',
             'vencimento' => 'required|date',
             'situacao' => 'required|string|max:50',
+        ], [
+            'valor.min' => 'Insira um valor maior ou igual a 0',
         ]);
 
         Conta::create([
@@ -42,6 +44,7 @@ class ContaController extends Controller
     public function edit(Conta $conta)
     {
         $this->authorize('update', $conta);
+
         return view('contas.edit', compact('conta'));
     }
 
@@ -51,7 +54,7 @@ class ContaController extends Controller
 
         $request->validate([
             'nome' => 'required|string|max:255',
-            'valor' => 'required|numeric',
+            'valor' => 'required|numeric|min:0',
             'vencimento' => 'required|date',
             'situacao' => 'required|string|max:50',
         ]);

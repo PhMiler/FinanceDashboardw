@@ -9,26 +9,42 @@ use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
-    public function index()
-{
-    $userId = Auth::id();
+    public function index(Request $request)
+    {
+        $userId = Auth::id();
 
-    $contas = Conta::where('user_id', $userId)->orderBy('vencimento')->get();
-    $receitas = Receita::where('user_id', $userId)->orderBy('data_recebimento', 'desc')->get();
+        // Filtro de datas
+        $dataInicio = $request->input('data_inicio');
+        $dataFim = $request->input('data_fim');
 
-    $totalContas = $contas->sum('valor');
-    $totalReceitas = $receitas->sum('valor');
-    $saldo = $totalReceitas - $totalContas;
-    $contasPendentes = $contas->where('situacao', 'Pendente')->count();
+        // Filtro para Contas
+        $contasQuery = Conta::where('user_id', $userId);
+        if ($dataInicio && $dataFim) {
+            $contasQuery->whereBetween('vencimento', [$dataInicio, $dataFim]);
+        }
+        $contas = $contasQuery->orderBy('vencimento')->get();
 
-    return view('dashboard', compact(
-        'contas',
-        'receitas',
-        'totalContas',
-        'totalReceitas',
-        'saldo',
-        'contasPendentes'
-    ));
-}
+        // Filtro para Receitas
+        $receitasQuery = Receita::where('user_id', $userId);
+        if ($dataInicio && $dataFim) {
+            $receitasQuery->whereBetween('data_recebimento', [$dataInicio, $dataFim]);
+        }
+        $receitas = $receitasQuery->orderBy('data_recebimento', 'desc')->get();
 
+        $totalContas = $contas->sum('valor');
+        $totalReceitas = $receitas->sum('valor');
+        $saldo = $totalReceitas - $totalContas;
+        $contasPendentes = $contas->where('situacao', 'Pendente')->count();
+
+        return view('dashboard', compact(
+            'contas',
+            'receitas',
+            'totalContas',
+            'totalReceitas',
+            'saldo',
+            'contasPendentes',
+            'dataInicio',
+            'dataFim'
+        ));
+    }
 }
