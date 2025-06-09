@@ -3,42 +3,41 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
-use Illuminate\View\View;
 
+/**
+ * Controller responsável por enviar o link de redefinição de senha para o e-mail do usuário.
+ */
 class PasswordResetLinkController extends Controller
 {
     /**
-     * Display the password reset link request view.
+     * Exibe o formulário para solicitar o link de redefinição de senha.
      */
-    public function create(): View
+    public function create()
     {
+        // Retorna a view de solicitação de redefinição de senha.
         return view('auth.forgot-password');
     }
 
     /**
-     * Handle an incoming password reset link request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
+     * Envia o link de redefinição de senha para o e-mail informado.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request)
     {
+        // Valida o campo de e-mail.
         $request->validate([
             'email' => ['required', 'email'],
         ]);
 
-        // We will send the password reset link to this user. Once we have attempted
-        // to send the link, we will examine the response then see the message we
-        // need to show to the user. Finally, we'll send out a proper response.
+        // Tenta enviar o link de redefinição de senha.
         $status = Password::sendResetLink(
             $request->only('email')
         );
 
+        // Retorna mensagem apropriada dependendo do status.
         return $status == Password::RESET_LINK_SENT
-                    ? back()->with('status', __($status))
-                    : back()->withInput($request->only('email'))
-                            ->withErrors(['email' => __($status)]);
+            ? back()->with('status', __($status))
+            : back()->withErrors(['email' => __($status)]);
     }
 }

@@ -3,23 +3,27 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Providers\RouteServiceProvider;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
+/**
+ * Controller responsável por enviar o e-mail de verificação para o usuário.
+ */
 class EmailVerificationNotificationController extends Controller
 {
     /**
-     * Send a new email verification notification.
+     * Envia um novo e-mail de verificação para o usuário autenticado.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request)
     {
+        // Se o usuário já confirmou o e-mail, não precisa reenviar.
         if ($request->user()->hasVerifiedEmail()) {
-            return redirect()->intended(RouteServiceProvider::HOME);
+            return redirect()->intended(route('dashboard'));
         }
 
+        // Envia a notificação de verificação de e-mail.
         $request->user()->sendEmailVerificationNotification();
 
-        return back()->with('status', 'verification-link-sent');
+        // Retorna para a tela anterior com mensagem de sucesso.
+        return back()->with('status', 'Link de verificação enviado para seu e-mail!');
     }
 }

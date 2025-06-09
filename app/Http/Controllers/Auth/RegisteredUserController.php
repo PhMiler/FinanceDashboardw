@@ -4,48 +4,51 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
-use Illuminate\View\View;
 
+/**
+ * Controller responsável pelo cadastro (registro) de novos usuários.
+ */
 class RegisteredUserController extends Controller
 {
     /**
-     * Display the registration view.
+     * Exibe o formulário de cadastro de usuário.
      */
-    public function create(): View
+    public function create()
     {
+        // Retorna a view de cadastro.
         return view('auth.register');
     }
 
     /**
-     * Handle an incoming registration request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
+     * Processa o registro de um novo usuário.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request)
     {
+        // Valida os dados do formulário de cadastro.
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 
+        // Cria o usuário no banco de dados.
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
+        // Dispara o evento de novo cadastro (útil para verificação de e-mail, etc).
         event(new Registered($user));
 
+        // Realiza o login automático do novo usuário.
         Auth::login($user);
 
-        return redirect(RouteServiceProvider::HOME);
+        // Redireciona para o dashboard ou página inicial.
+        return redirect(route('dashboard'));
     }
 }

@@ -3,39 +3,44 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Providers\RouteServiceProvider;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\ValidationException;
-use Illuminate\View\View;
 
+/**
+ * Controller responsável por solicitar a confirmação da senha do usuário antes de permitir ações sensíveis.
+ * Exemplo: alteração de dados críticos, exclusão de conta, etc.
+ */
 class ConfirmablePasswordController extends Controller
 {
     /**
-     * Show the confirm password view.
+     * Exibe o formulário para o usuário confirmar sua senha atual.
      */
-    public function show(): View
+    public function show()
     {
+        // Retorna a view de confirmação de senha.
         return view('auth.confirm-password');
     }
 
     /**
-     * Confirm the user's password.
+     * Processa a confirmação da senha.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request)
     {
-        if (! Auth::guard('web')->validate([
+        // Verifica se a senha informada está correta.
+        if (!Auth::validate([
             'email' => $request->user()->email,
             'password' => $request->password,
         ])) {
-            throw ValidationException::withMessages([
-                'password' => __('auth.password'),
+            // Retorna erro caso a senha esteja incorreta.
+            return back()->withErrors([
+                'password' => __('A senha informada está incorreta.'),
             ]);
         }
 
+        // Armazena o momento da confirmação na sessão.
         $request->session()->put('auth.password_confirmed_at', time());
 
-        return redirect()->intended(RouteServiceProvider::HOME);
+        // Redireciona para a rota pretendida após confirmação.
+        return redirect()->intended();
     }
 }

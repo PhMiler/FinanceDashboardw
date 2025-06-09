@@ -3,26 +3,30 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
-use Illuminate\Http\RedirectResponse;
 
+/**
+ * Controller responsável por processar a verificação de e-mail do usuário.
+ */
 class VerifyEmailController extends Controller
 {
     /**
-     * Mark the authenticated user's email address as verified.
+     * Processa a verificação do e-mail a partir do link enviado para o usuário.
      */
-    public function __invoke(EmailVerificationRequest $request): RedirectResponse
+    public function __invoke(EmailVerificationRequest $request)
     {
+        // Se o e-mail já está verificado, redireciona para o dashboard.
         if ($request->user()->hasVerifiedEmail()) {
-            return redirect()->intended(RouteServiceProvider::HOME.'?verified=1');
+            return redirect()->intended(route('dashboard'));
         }
 
+        // Marca o e-mail como verificado e dispara o evento.
         if ($request->user()->markEmailAsVerified()) {
             event(new Verified($request->user()));
         }
 
-        return redirect()->intended(RouteServiceProvider::HOME.'?verified=1');
+        // Redireciona para o dashboard com mensagem de sucesso.
+        return redirect()->intended(route('dashboard'))->with('verified', true);
     }
 }

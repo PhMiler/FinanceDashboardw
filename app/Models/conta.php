@@ -1,15 +1,15 @@
-<?php
+<?php // Início do arquivo PHP
 
-namespace App\Models;
+namespace App\Models; // Namespace deste arquivo (organização de código)
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory; // Importação de classes/recursos do Laravel
+use Illuminate\Database\Eloquent\Model; // Importação de classes/recursos do Laravel
 
-class Conta extends Model
+class Conta extends Model // Definição da classe principal do model Conta
 {
-    use HasFactory;
+    use HasFactory; // Importação de classes/recursos do Laravel
 
-    protected $fillable = [
+    protected $fillable = [ // Define os atributos que podem ser preenchidos em massa (mass assignment)
         'user_id',
         'nome',
         'valor',
@@ -18,7 +18,7 @@ class Conta extends Model
     ];
 
     // Relacionamento com usuário
-    public function user()
+    public function user() // Declaração de método de relacionamento no model
     {
         return $this->belongsTo(User::class);
     }

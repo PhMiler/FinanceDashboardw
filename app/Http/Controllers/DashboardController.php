@@ -7,35 +7,52 @@ use App\Models\Conta;
 use App\Models\Receita;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * Controller responsável por exibir o painel (dashboard) financeiro do usuário.
+ * O painel mostra o resumo das contas, receitas, saldo, e quantidade de contas pendentes.
+ */
 class DashboardController extends Controller
 {
+    /**
+     * Exibe a página do dashboard, com dados filtrados por período se informado.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\View\View
+     */
     public function index(Request $request)
     {
+        // Obtém o ID do usuário autenticado.
         $userId = Auth::id();
 
-        // Filtro de datas
+        // Recebe filtros de data inicial e final via request (úteis para relatórios customizados).
         $dataInicio = $request->input('data_inicio');
         $dataFim = $request->input('data_fim');
 
-        // Filtro para Contas
-        $contasQuery = Conta::where('user_id', $userId);
+        // --- Consulta de contas a pagar/receber ---
+        $contasQuery = Conta::where('user_id', $userId); // Apenas contas do usuário logado.
         if ($dataInicio && $dataFim) {
+            // Aplica filtro de período caso informado.
             $contasQuery->whereBetween('vencimento', [$dataInicio, $dataFim]);
         }
+        // Ordena as contas por data de vencimento.
         $contas = $contasQuery->orderBy('vencimento')->get();
 
-        // Filtro para Receitas
-        $receitasQuery = Receita::where('user_id', $userId);
+        // --- Consulta de receitas ---
+        $receitasQuery = Receita::where('user_id', $userId); // Apenas receitas do usuário logado.
         if ($dataInicio && $dataFim) {
+            // Aplica filtro de período caso informado.
             $receitasQuery->whereBetween('data_recebimento', [$dataInicio, $dataFim]);
         }
+        // Ordena as receitas da mais recente para a mais antiga.
         $receitas = $receitasQuery->orderBy('data_recebimento', 'desc')->get();
 
-        $totalContas = $contas->sum('valor');
-        $totalReceitas = $receitas->sum('valor');
-        $saldo = $totalReceitas - $totalContas;
-        $contasPendentes = $contas->where('situacao', 'Pendente')->count();
+        // --- Cálculos de totais e indicadores do dashboard ---
+        $totalContas = $contas->sum('valor');          // Soma o valor total das contas no período.
+        $totalReceitas = $receitas->sum('valor');      // Soma o valor total das receitas no período.
+        $saldo = $totalReceitas - $totalContas;        // Calcula o saldo: receitas menos contas.
+        $contasPendentes = $contas->where('situacao', 'Pendente')->count(); // Conta quantas contas estão pendentes.
 
+        // Retorna a view 'dashboard' com todos os dados necessários para exibição.
         return view('dashboard', compact(
             'contas',
             'receitas',
