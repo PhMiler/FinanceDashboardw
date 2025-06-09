@@ -7,25 +7,44 @@
         <div class="card-body">
             <form action="{{ route('contas.store') }}" method="POST">
                 @csrf
+
                 <div class="mb-3">
                     <label for="nome" class="form-label">Nome</label>
-                    <input type="text" name="nome" id="nome" class="form-control" value="{{ old('nome') }}" required>
+                    <input type="text" name="nome" id="nome" class="form-control" value="{{ old('nome') }}" required maxlength="100", >
+                    @error('nome')
+                        <div class="text-danger mt-1">{{ $message }}</div>
+                    @enderror
                 </div>
+
                 <div class="mb-3">
                     <label for="valor" class="form-label">Valor (R$)</label>
-                    <input type="number" step="0.01" name="valor" id="valor" class="form-control" value="{{ old('valor') }}" required>
+                    <input type="number" name="valor" id="valor" class="form-control" value="{{ old('valor') }}" 
+                    required min="0" max="9999999.99">
+                    @error('valor')
+                        <div class="text-danger mt-1">{{ $message }}</div>
+                    @enderror
                 </div>
+
                 <div class="mb-3">
                     <label for="vencimento" class="form-label">Vencimento</label>
-                    <input type="date" name="vencimento" id="vencimento" class="form-control" value="{{ old('vencimento') }}" required>
+                    <input type="date" name="vencimento" id="vencimento" class="form-control" value="{{ old('vencimento') }}" 
+                    required max="2100-12-31" min="{{ date('Y-m-d') }}" max="2100-12-31">
+                    @error('vencimento')
+                        <div class="text-danger mt-1">{{ $message }}</div>
+                    @enderror
                 </div>
+
                 <div class="mb-3">
                     <label for="situacao" class="form-label">Situação</label>
                     <select name="situacao" id="situacao" class="form-select" required>
                         <option value="Pendente" {{ old('situacao') == 'Pendente' ? 'selected' : '' }}>Pendente</option>
                         <option value="Pago" {{ old('situacao') == 'Pago' ? 'selected' : '' }}>Pago</option>
                     </select>
+                    @error('situacao')
+                        <div class="text-danger mt-1">{{ $message }}</div>
+                    @enderror
                 </div>
+
                 <div class="d-flex justify-content-end gap-2">
                     <a href="{{ route('contas.index') }}" class="btn btn-secondary">Cancelar</a>
                     <button type="submit" class="btn btn-success">Salvar</button>

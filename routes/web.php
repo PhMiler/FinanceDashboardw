@@ -10,6 +10,9 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
+Route::get('/home', function () {
+    return view('home');
+})->middleware(['auth', 'verified'])->name('home');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])

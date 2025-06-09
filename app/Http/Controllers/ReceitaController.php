@@ -22,12 +22,24 @@ class ReceitaController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'descricao' => 'required|string|max:255',
-            'valor' => 'required|numeric',
-            'data_recebimento' => 'required|date',
+            'descricao' => 'required|string|max:100',
+            'valor' => 'required|numeric|min:0.01|max:999999.99',
+            'data_recebimento' => 'required|date|before_or_equal:2100-12-31|after_or_equal:today',
+        ], [
+            'descricao.required' => 'O campo descrição é obrigatório',
+            'descricao.max' => 'Máximo de caracteres: 100',
+            'valor.min' => 'O valor deve ser maior que zero',
+            'valor.required' => 'O campo valor é obrigatório',
+            'valor.max' => 'O valor deve ser menor que 999.999,99',
+            'valor.numeric' => 'O valor deve ser um número válido',
+            'data_recebimento.required' => 'O campo data de recebimento é obrigatório',
+            'data_recebimento.date' => 'A data de recebimento deve ser uma data válida',
+            'data_recebimento.before_or_equal' => 'A data de vencimento não pode ser posterior a 31/12/2100',
+            'data_recebimento.after_or_equal' => 'A data de vencimento não pode ser anterior a hoje',
         ]);
 
-        Receita::create([
+         // Cria a receita
+           Receita::create([
             'user_id' => Auth::id(),
             'descricao' => $request->descricao,
             'valor' => $request->valor,
@@ -48,9 +60,20 @@ class ReceitaController extends Controller
         $this->authorize('update', $receita);
 
         $request->validate([
-            'descricao' => 'required|string|max:255',
-            'valor' => 'required|numeric',
-            'data_recebimento' => 'required|date',
+            'descricao' => 'required|string|max:100',
+            'valor' => 'required|numeric|min:0.01|max:999999.99',
+            'data_recebimento' => 'required|date|before_or_equal:2100-12-31|after_or_equal:today',
+        ], [
+            'descricao.required' => 'O campo descrição é obrigatório',
+            'descricao.max' => 'Máximo de caracteres: 100',
+            'valor.min' => 'O valor deve ser maior que zero',
+            'valor.required' => 'O campo valor é obrigatório',
+            'valor.max' => 'O valor deve ser menor que 999.999,99',
+            'valor.numeric' => 'O valor deve ser um número válido',
+            'data_recebimento.required' => 'O campo data de recebimento é obrigatório',
+            'data_recebimento.date' => 'A data de recebimento deve ser uma data válida',
+            'data_recebimento.before_or_equal' => 'A data de vencimento não pode ser posterior a 31/12/2100',
+            'data_recebimento.after_or_equal' => 'A data de vencimento não pode ser anterior a hoje',
         ]);
 
         $receita->update($request->only(['descricao', 'valor', 'data_recebimento']));

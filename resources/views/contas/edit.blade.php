@@ -10,15 +10,27 @@
                 @method('PUT')
                 <div class="mb-3">
                     <label for="nome" class="form-label">Nome</label>
-                    <input type="text" name="nome" id="nome" class="form-control" value="{{ old('nome', $conta->nome) }}" required>
+                    <input type="text" name="nome" id="nome" class="form-control" value="{{ old('nome', $conta->nome) }}" 
+                    required maxlength="100">
+                    @error('nome')
+                        <div class="text-danger mt-1">{{ $message }}</div>
+                    @enderror
                 </div>
                 <div class="mb-3">
                     <label for="valor" class="form-label">Valor (R$)</label>
-                    <input type="number" step="0.01" name="valor" id="valor" class="form-control" value="{{ old('valor', $conta->valor) }}" required>
+                    <input type="number" step="0.01" name="valor" id="valor" class="form-control" value="{{ old('valor', $conta->valor) }}" 
+                    required min="0" max="9999999.99">
+                    @error('valor')
+                        <div class="text-danger mt-1">{{ $message }}</div>
+                    @enderror
                 </div>
                 <div class="mb-3">
                     <label for="vencimento" class="form-label">Vencimento</label>
-                    <input type="date" name="vencimento" id="vencimento" class="form-control" value="{{ old('vencimento', $conta->vencimento) }}" required>
+                    <input type="date" name="vencimento" id="vencimento" class="form-control" value="{{ old('vencimento', $conta->vencimento) }}" 
+                    required max="2100-12-31" min="{{ date('Y-m-d') }}" max="2100-12-31">
+                    @error('vencimento')
+                        <div class="text-danger mt-1">{{ $message }}</div>
+                    @enderror
                 </div>
                 <div class="mb-3">
                     <label for="situacao" class="form-label">Situação</label>
