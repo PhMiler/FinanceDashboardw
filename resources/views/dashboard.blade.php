@@ -1,14 +1,15 @@
-@extends('layouts.app')
+@extends('layouts.app') {{-- Usa o layout base da aplicação --}}
 
 @section('content')
 <div class="container mt-4">
 
-    {{-- Título + Filtro --}}
+    {{-- Título e Filtro por data --}}
     <div class="row align-items-center mb-4">
         <div class="col-lg-6 col-12 d-flex align-items-center">
             <h2 class="fw-bold text-primary mb-0">Dashboard Financeiro</h2>
         </div>
         <div class="col-lg-6 col-12 d-flex justify-content-lg-end justify-content-start mt-3 mt-lg-0">
+            {{-- Formulário de filtro por data de início e fim --}}
             <form class="d-flex flex-wrap align-items-end gap-2" method="GET" action="{{ route('dashboard') }}">
                 <div>
                     <label for="data_inicio" class="form-label mb-0 me-1">De:</label>
@@ -31,12 +32,13 @@
         </div>
     </div>
 
-    {{-- Cards do resumo --}}
+    {{-- Cards de resumo financeiro --}}
     <div class="row g-4 mb-4">
         <div class="col-md-3">
             <div class="card border-primary shadow">
                 <div class="card-body text-center">
                     <h6>Total de Contas</h6>
+                    {{-- Exibe o valor total das contas --}}
                     <p class="h4 fw-bold text-danger">R$ {{ number_format($totalContas, 2, ',', '.') }}</p>
                 </div>
             </div>
@@ -45,6 +47,7 @@
             <div class="card border-success shadow">
                 <div class="card-body text-center">
                     <h6>Total de Receitas</h6>
+                    {{-- Exibe o valor total das receitas --}}
                     <p class="h4 fw-bold text-success">R$ {{ number_format($totalReceitas, 2, ',', '.') }}</p>
                 </div>
             </div>
@@ -53,6 +56,7 @@
             <div class="card border-info shadow">
                 <div class="card-body text-center">
                     <h6>Saldo Atual</h6>
+                    {{-- Exibe o saldo, muda cor se negativo --}}
                     <p class="h4 fw-bold {{ $saldo < 0 ? 'text-danger' : 'text-info' }}">
                         R$ {{ number_format($saldo, 2, ',', '.') }}
                     </p>
@@ -63,13 +67,14 @@
             <div class="card border-warning shadow">
                 <div class="card-body text-center">
                     <h6>Contas Pendentes</h6>
+                    {{-- Exibe a quantidade de contas pendentes --}}
                     <p class="h4 fw-bold text-warning">{{ $contasPendentes }}</p>
                 </div>
             </div>
         </div>
     </div>
 
-    {{-- TABELA DE CONTAS --}}
+    {{-- Tabela de contas --}}
     <div class="card mb-4 shadow">
         <div class="card-header bg-primary text-white">
             Minhas Contas
@@ -85,12 +90,14 @@
                     </tr>
                 </thead>
                 <tbody>
+                    {{-- Lista as contas, ou mostra mensagem se não houver --}}
                     @forelse($contas as $conta)
                         <tr>
                             <td>{{ $conta->nome }}</td>
                             <td>R$ {{ number_format($conta->valor, 2, ',', '.') }}</td>
                             <td>{{ \Carbon\Carbon::parse($conta->vencimento)->format('d/m/Y') }}</td>
                             <td>
+                                {{-- Badge de situação: Pendente = amarelo, Quitada = verde --}}
                                 <span class="badge bg-{{ $conta->situacao == 'Pendente' ? 'warning' : 'success' }}">
                                     {{ $conta->situacao }}
                                 </span>
@@ -106,7 +113,7 @@
         </div>
     </div>
 
-    {{-- TABELA DE RECEITAS --}}
+    {{-- Tabela de receitas --}}
     <div class="card shadow">
         <div class="card-header bg-success text-white">
             Minhas Receitas
@@ -121,6 +128,7 @@
                     </tr>
                 </thead>
                 <tbody>
+                    {{-- Lista as receitas, ou mostra mensagem se não houver --}}
                     @forelse($receitas as $receita)
                         <tr>
                             <td>{{ $receita->descricao }}</td>

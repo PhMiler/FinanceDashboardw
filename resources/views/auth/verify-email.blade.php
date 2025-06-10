@@ -1,8 +1,10 @@
-<x-guest-layout>
+<x-guest-layout> {{-- Layout para visitantes/usuários não autenticados --}}
     <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
+        {{-- Mensagem agradecendo o cadastro e pedindo para verificar o e-mail --}}
         {{ __('Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn\'t receive the email, we will gladly send you another.') }}
     </div>
 
+    {{-- Exibe uma mensagem caso um novo link de verificação tenha sido enviado --}}
     @if (session('status') == 'verification-link-sent')
         <div class="mb-4 font-medium text-sm text-green-600 dark:text-green-400">
             {{ __('A new verification link has been sent to the email address you provided during registration.') }}
@@ -10,6 +12,7 @@
     @endif
 
     <div class="mt-4 flex items-center justify-between">
+        {{-- Formulário para reenviar o e-mail de verificação --}}
         <form method="POST" action="{{ route('verification.send') }}">
             @csrf
 
@@ -20,6 +23,7 @@
             </div>
         </form>
 
+        {{-- Formulário para realizar logout --}}
         <form method="POST" action="{{ route('logout') }}">
             @csrf
 

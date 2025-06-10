@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
-
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 /**
  * Controller responsável por processar a verificação de e-mail do usuário.
  */
@@ -27,6 +29,6 @@ class VerifyEmailController extends Controller
         }
 
         // Redireciona para o dashboard com mensagem de sucesso.
-        return redirect()->intended(route('dashboard'))->with('verified', true);
+        return redirect()->intended(route('home'))->with('verified', true);
     }
 }
